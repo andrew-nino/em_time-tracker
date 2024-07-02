@@ -1,8 +1,18 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"log"
+
+	"github.com/gin-gonic/gin"
+)
+
+var (
+	// ErrInvalidAuthHeader   = fmt.Errorf("invalid auth header")
+	// ErrCannotParseToken    = fmt.Errorf("cannot parse token")
+	ErrCannotParsePassport = fmt.Errorf("invalid passport string")
+	// ErrCannotParseToken  = fmt.Errorf("cannot parse token")
+
 )
 
 type errorResponse struct {

@@ -1,6 +1,6 @@
 package entity
 
-import "time"
+// import "time"
 
 type Manager struct {
 	Id          int    `db:"id" swagg:"-"`
@@ -11,11 +11,8 @@ type Manager struct {
 }
 
 type People struct {
-	Surname        string    `json:"surname"`
-	Name           string    `json:"name"`
-	Patronymic     string    `json:"patronymic"`
-	Address        string    `json:"address"`
-	PassportSerie  string    `db:"passportSerie"  json:"passportSerie"   binding:"required"`
-	PassportNumber string    `db:"passportNumber" json:"passportNumber"  binding:"required"`
-	CreatedAt      time.Time `db:"createdAt" json:"createdAt" swagg:"-" `
+	Surname        string    `db:"surname" json:"surname"`
+	Name           string    `db:"name" json:"name"`
+	Patronymic     string    `db:"patronymic" json:"patronymic"`
+	Address        string    `db:"address" json:"address"`
 }
