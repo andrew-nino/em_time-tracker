@@ -2,6 +2,7 @@ package postgresdb
 
 import (
 	"fmt"
+
 	"github.com/jmoiron/sqlx"
 
 	"github.com/andrew-nino/em_time-tracker/entity"
@@ -16,11 +17,11 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres {
 }
 
 // We create a new user in the database and return his ID or the error [ErrNoRows] if it does not work.
-func (r *AuthPostgres) CreateUser(user entity.User) (int, error) {
+func (r *AuthPostgres) CreateManager(mng entity.Manager) (int, error) {
 	var id int
-	query := fmt.Sprintf("INSERT INTO %s (passportSerie, passportNumber) values ($1, $2) RETURNING id", usersTable)
+	query := fmt.Sprintf("INSERT INTO %s (name, managername, password_hash) values ($1, $2, $3) RETURNING id", managerTable)
 
-	row := r.db.QueryRow(query, user.PassportSerie, user.PassportNumber)
+	row := r.db.QueryRow(query, mng.Name, mng.Managername, mng.Password)
 	if err := row.Scan(&id); err != nil {
 		return 0, err
 	}
@@ -29,10 +30,10 @@ func (r *AuthPostgres) CreateUser(user entity.User) (int, error) {
 }
 
 // We make a request to the database about the user. An error is returned if the result set is empty.
-func (r *AuthPostgres) GetUser(serie, number string) (entity.User, error) {
-	var user entity.User
-	query := fmt.Sprintf("SELECT id FROM %s WHERE passportSerie=$1 AND passportNumber=$2", usersTable)
-	err := r.db.Get(&user, query, serie, number)
+func (r *AuthPostgres) GetManager(managerName, password string) (entity.Manager, error) {
+	var user entity.Manager
+	query := fmt.Sprintf("SELECT id FROM %s WHERE managername=$1 AND password_hash=$2", managerTable)
+	err := r.db.Get(&user, query, managerName, password)
 
 	return user, err
 }

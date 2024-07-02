@@ -10,14 +10,14 @@ import (
 
 func (h *Handler) signUp(c *gin.Context) {
 
-	var input entity.User
+	var input entity.Manager
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
 
-	id, err := h.services.Authorization.CreateUser(input)
+	id, err := h.services.Authorization.CreateManager(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -29,8 +29,8 @@ func (h *Handler) signUp(c *gin.Context) {
 }
 
 type signInInput struct {
-	PassportSerie  string `json:"passportSerie" binding:"required"`
-	PassportNumber string `json:"passportNumber" binding:"required"`
+	ManagerName string `json:"managername" binding:"required"`
+	Password    string `json:"password" binding:"required"`
 }
 
 func (h *Handler) signIn(c *gin.Context) {
@@ -41,7 +41,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.Authorization.SignIn(input.PassportSerie, input.PassportNumber)
+	token, err := h.services.Authorization.SignIn(input.ManagerName, input.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

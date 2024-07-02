@@ -7,8 +7,8 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user entity.User) (int, error)
-	GetUser(username, password string) (entity.User, error)
+	CreateManager(user entity.Manager) (int, error)
+	GetManager(username, password string) (entity.Manager, error)
 }
 
 type PG_Repository struct {

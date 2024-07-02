@@ -1,5 +1,7 @@
 package postgresdb
 
 const (
-	usersTable = "users"
+	managerTable = "managers"
+	peopleTable = "people"
+
 )

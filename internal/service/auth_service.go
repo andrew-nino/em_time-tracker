@@ -22,7 +22,7 @@ const (
 
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
+	ManagerId int `json:"user_id"`
 }
 
 type AuthService struct {
@@ -34,30 +34,24 @@ func NewAuthService(repo repo.Authorization) *AuthService {
 }
 
 // Hashes the password and transfers the data to the repository.
-func (s *AuthService) CreateUser(user entity.User) (int, error) {
+func (s *AuthService) CreateManager(mng entity.Manager) (int, error) {
 	var err error
-	user.PassportSerie, err = generatePasswordHash(user.PassportSerie)
+
+	mng.Password, err = generatePasswordHash(mng.Password)
 	if err != nil {
 		return 0, err
 	}
-	user.PassportNumber, err = generatePasswordHash(user.PassportNumber)
-	if err != nil {
-		return 0, err
-	}
-	return s.repo.CreateUser(user)
+	return s.repo.CreateManager(mng)
 }
 
 // Checks that the client is already registered and returns the generated token.
-func (s *AuthService) SignIn(serie, number string) (string, error) {
-	serieHash, err := generatePasswordHash(serie)
+func (s *AuthService) SignIn(managerName, password string) (string, error) {
+
+	passwordHash, err := generatePasswordHash(password)
 	if err != nil {
 		return "", err
 	}
-	numberHhash, err := generatePasswordHash(number)
-	if err != nil {
-		return "", err
-	}
-	user, err := s.repo.GetUser(serieHash, numberHhash)
+	manager, err := s.repo.GetManager(managerName, passwordHash)
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +61,7 @@ func (s *AuthService) SignIn(serie, number string) (string, error) {
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		user.Id,
+		manager.Id,
 	})
 
 	return token.SignedString([]byte(signingKey))
@@ -90,7 +84,7 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		return 0, errors.New("token claims are not of type *tokenClaims")
 	}
 
-	return claims.UserId, nil
+	return claims.ManagerId, nil
 }
 
 // generatePasswordHash generates a SHA1 hash of the given password with a salt.
