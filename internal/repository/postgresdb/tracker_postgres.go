@@ -15,7 +15,6 @@ func NewTrackerPostgres(db *sqlx.DB) *TrackerToPostgres {
 }
 
 func (t *TrackerToPostgres) StartTask(user_id, task_id string) (int, error) {
-
 	tx, err := t.db.Begin()
 	if err != nil {
 		return 0, err
@@ -54,10 +53,23 @@ func (t *TrackerToPostgres) StartTask(user_id, task_id string) (int, error) {
 
 func (t *TrackerToPostgres) StopTask(user_id, task_id string) error {
 
-	createItemQuery := fmt.Sprintf("UPDATE %s SET finished_at = now() WHERE task_id = $1 AND people_id = $2", trackerTable)
-	_, err := t.db.Exec(createItemQuery, task_id, user_id)
+	tx, err := t.db.Begin()
 	if err != nil {
 		return err
 	}
-	return nil
+
+	createItemQuery := fmt.Sprintf("UPDATE %s SET finished_at = now() WHERE task_id = $1 AND people_id = $2", trackerTable)
+	_, err = tx.Exec(createItemQuery, task_id, user_id)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("error updating tracker: %w", err)
+	}
+
+	updateQuery := fmt.Sprintf("UPDATE %s SET status = 'completed' WHERE id = $1", taskTable)
+	_, err = tx.Exec(updateQuery, task_id)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("failed to update task status when running task: %w", err)
+	}
+	return tx.Commit()
 }
