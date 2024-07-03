@@ -21,10 +21,18 @@ type Info interface {
 	GetUserInfo(serie, number string) (entity.People, error)
 }
 
+type Tasks interface {
+	CreateTask(task entity.Task) (int, error)
+	DeleteTask(taskId int) error
+	GetTask(taskId int) (entity.Task, error)
+	GetTasks() ([]entity.Task, error)
+}
+
 type Service struct {
 	Authorization
 	People
 	Info
+	Tasks
 }
 
 func NewService(reposPG *postgres.PG_Repository) *Service {
@@ -32,5 +40,6 @@ func NewService(reposPG *postgres.PG_Repository) *Service {
 		Authorization: NewAuthService(reposPG.Authorization),
 		People:        NewPeopleService(reposPG.PeopleRepository),
 		Info:          NewInfoService(reposPG.InfoRepository),
+		Tasks:         NewTasksService(reposPG.TasksRepository),
 	}
 }

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS managers (
     managername   varchar(255) not null unique,
     password_hash varchar(255) not null,
     role          varchar(7)   not null default 'manager',
-    created_at    timestamp    not null default now(),
+    created_at    timestamp    not null default now()
 
     CONSTRAINT role_manager CHECK (role IN ('admin', 'manager'))
 );
@@ -25,24 +25,19 @@ CREATE UNIQUE INDEX people_passport_idx ON people (passport_serie, passport_numb
 
 CREATE TABLE IF NOT EXISTS tasks (
     id              serial       primary key,
+    name            varchar(10)  not null unique,
     importance      varchar(4)   not null default 'low',
     status          varchar(10)  not null default 'planed',
-    description     text,
+    description     text
 
     CONSTRAINT importance_task CHECK (importance IN ('high', 'low'))
     CONSTRAINT status_task CHECK (status IN ('planed', 'accepted', 'completed'))
 );
 
-
-CREATE TABLE IF NOT EXISTS people_tasks (
-    id           serial       primary key,
-    person_id    integer      not null references people(id) on delete cascade ,
-    task_id      integer      not null references tasks(id)  on delete cascade ,
-);
-
 CREATE TABLE IF NOT EXISTS tracker (
     id           serial       primary key,
     task_id      integer      not null references tasks(id) on delete cascade,
+    people_id    integer      not null references people(id) on delete cascade,
     created_at   timestamp without time zone default now(),
-    finished_at  timestamp without time zone,
+    finished_at  timestamp without time zone
 );

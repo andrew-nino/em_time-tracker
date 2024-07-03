@@ -32,7 +32,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/sign-in", h.signIn)
 	}
 
+	// v1 := router.Group("/api/v1", h.userIdentity)
 	v1 := router.Group("/api/v1")
+
 	{
 		info := v1.Group("/info")
 		{
@@ -44,6 +46,16 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			people.POST("/create", h.createPerson)
 			people.PATCH("/update", h.updatePerson)
 			people.DELETE("/delete", h.deletePerson)
+		}
+
+		tasks := v1.Group("/tasks")
+		{
+			tasks.POST("/create", h.createTask)
+			tasks.GET("/:taskId", h.getTask)
+			tasks.GET("/", h.getTasks)
+
+			// tasks.PATCH("/update", h.updateTask)
+			tasks.DELETE("/delete", h.deleteTask)
 		}
 	}
 

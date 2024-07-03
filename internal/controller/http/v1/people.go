@@ -14,6 +14,7 @@ type userInput struct {
 
 type response struct {
 	Message string `json:"message"`
+	ID  int    `json:"id"`
 }
 
 func (h *Handler) createPerson(c *gin.Context) {

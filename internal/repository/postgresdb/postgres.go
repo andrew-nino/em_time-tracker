@@ -21,16 +21,25 @@ type InfoRepository interface {
 	GetUserInfo(serie, number string) (entity.People, error)
 }
 
+type TasksRepository interface {
+	CreateTask(task entity.Task) (int, error)
+	GetTask(taskId int) (entity.Task, error)
+	GetTasks() ([]entity.Task, error)
+	DeleteTask(taskId int) error
+}
+
 type PG_Repository struct {
 	Authorization
 	PeopleRepository
 	InfoRepository
+	TasksRepository
 }
 
 func NewPGRepository(db *sqlx.DB) *PG_Repository {
 	return &PG_Repository{
-		Authorization: NewAuthPostgres(db),
+		Authorization:    NewAuthPostgres(db),
 		PeopleRepository: NewPeopleToPostgres(db),
-		InfoRepository: NewInfoFromPostgres(db),
+		InfoRepository:   NewInfoFromPostgres(db),
+		TasksRepository:  NewTasksToPostgres(db),
 	}
 }

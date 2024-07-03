@@ -2,6 +2,6 @@ package postgresdb
 
 const (
 	managerTable = "managers"
-	peopleTable = "people"
-
+	peopleTable  = "people"
+	taskTable   = "tasks"
 )
