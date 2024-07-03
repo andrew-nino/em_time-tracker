@@ -35,9 +35,11 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 
 CREATE TABLE IF NOT EXISTS tracker (
-    id           serial       primary key,
-    task_id      integer      not null references tasks(id) on delete cascade,
-    people_id    integer      not null references people(id) on delete cascade,
+    id           serial     primary key,
+    task_id      integer    references tasks(id) on delete cascade   not null ,
+    people_id    integer    references people(id) on delete cascade  not null ,
     created_at   timestamp without time zone default now(),
     finished_at  timestamp without time zone
 );
+
+CREATE UNIQUE INDEX tracker_taskid_peopleid_idx ON tracker (task_id, people_id);

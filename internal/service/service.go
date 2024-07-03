@@ -28,11 +28,16 @@ type Tasks interface {
 	GetTasks() ([]entity.Task, error)
 }
 
+type Tracker interface {
+	StartTask(user_id, task_id string) (int, error)
+	StopTask(user_id, task_id string) error
+}
 type Service struct {
 	Authorization
 	People
 	Info
 	Tasks
+	Tracker
 }
 
 func NewService(reposPG *postgres.PG_Repository) *Service {
@@ -41,5 +46,6 @@ func NewService(reposPG *postgres.PG_Repository) *Service {
 		People:        NewPeopleService(reposPG.PeopleRepository),
 		Info:          NewInfoService(reposPG.InfoRepository),
 		Tasks:         NewTasksService(reposPG.TasksRepository),
+		Tracker:       NewTrackerService(reposPG.TrackerRepository),
 	}
 }

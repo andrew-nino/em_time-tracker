@@ -57,6 +57,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			// tasks.PATCH("/update", h.updateTask)
 			tasks.DELETE("/delete", h.deleteTask)
 		}
+		tracker := v1.Group("/tracker")
+		{
+			tracker.POST("/start", h.startTask)
+            tracker.POST("/stop", h.stopTask)
+            // tracker.GET("/:taskId", h.getTracker)
+            // tracker.GET("/", h.getTrackers)
+            // tracker.GET("/stats", h.getTrackerStats)
+		}
 	}
 
 	return router

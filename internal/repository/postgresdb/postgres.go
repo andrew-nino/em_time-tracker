@@ -28,18 +28,25 @@ type TasksRepository interface {
 	DeleteTask(taskId int) error
 }
 
+type TrackerRepository interface {
+	StartTask(user_id, task_id string) (int, error)
+	StopTask(user_id, task_id string) error
+}
+
 type PG_Repository struct {
 	Authorization
 	PeopleRepository
 	InfoRepository
 	TasksRepository
+	TrackerRepository
 }
 
 func NewPGRepository(db *sqlx.DB) *PG_Repository {
 	return &PG_Repository{
-		Authorization:    NewAuthPostgres(db),
-		PeopleRepository: NewPeopleToPostgres(db),
-		InfoRepository:   NewInfoFromPostgres(db),
-		TasksRepository:  NewTasksToPostgres(db),
+		Authorization:     NewAuthPostgres(db),
+		PeopleRepository:  NewPeopleToPostgres(db),
+		InfoRepository:    NewInfoFromPostgres(db),
+		TasksRepository:   NewTasksToPostgres(db),
+		TrackerRepository: NewTrackerPostgres(db),
 	}
 }
