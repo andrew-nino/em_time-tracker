@@ -22,3 +22,27 @@ CREATE TABLE IF NOT EXISTS people (
 );
 
 CREATE UNIQUE INDEX people_passport_idx ON people (passport_serie, passport_number);
+
+CREATE TABLE IF NOT EXISTS tasks (
+    id              serial       primary key,
+    importance      varchar(4)   not null default 'low',
+    status          varchar(10)  not null default 'planed',
+    description     text,
+
+    CONSTRAINT importance_task CHECK (importance IN ('high', 'low'))
+    CONSTRAINT status_task CHECK (status IN ('planed', 'accepted', 'completed'))
+);
+
+
+CREATE TABLE IF NOT EXISTS people_tasks (
+    id           serial       primary key,
+    person_id    integer      not null references people(id) on delete cascade ,
+    task_id      integer      not null references tasks(id)  on delete cascade ,
+);
+
+CREATE TABLE IF NOT EXISTS tracker (
+    id           serial       primary key,
+    task_id      integer      not null references tasks(id) on delete cascade,
+    created_at   timestamp without time zone default now(),
+    finished_at  timestamp without time zone,
+);
