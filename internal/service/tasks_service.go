@@ -21,8 +21,8 @@ func (t *TasksService) GetTask(taskID int) (entity.Task, error) {
     return t.repo.GetTask(taskID)
 }
 
-func (t *TasksService) GetTasks() ([]entity.Task, error) {
-    return t.repo.GetTasks()
+func (t *TasksService) GetTasks(limit int) ([]entity.Task, error) {
+    return t.repo.GetTasks(limit)
 }
 
 func (t *TasksService) DeleteTask(taskID int) error {

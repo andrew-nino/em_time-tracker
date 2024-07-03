@@ -46,8 +46,16 @@ func (h *Handler) getTask(c *gin.Context) {
 func (h *Handler) getTasks(c *gin.Context) {
 
 	var out []entity.Task
+	var limit int
 
-	out, err := h.services.GetTasks()
+	limitStr := c.Query("limit")
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, "failed to convert task ID")
+		return
+	}
+
+	out, err = h.services.GetTasks(limit)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, "failed to get tasks")
 		return

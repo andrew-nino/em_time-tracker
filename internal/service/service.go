@@ -25,7 +25,7 @@ type Tasks interface {
 	CreateTask(task entity.Task) (int, error)
 	DeleteTask(taskId int) error
 	GetTask(taskId int) (entity.Task, error)
-	GetTasks() ([]entity.Task, error)
+	GetTasks(limit int) ([]entity.Task, error)
 }
 
 type Tracker interface {

@@ -24,7 +24,7 @@ type InfoRepository interface {
 type TasksRepository interface {
 	CreateTask(task entity.Task) (int, error)
 	GetTask(taskId int) (entity.Task, error)
-	GetTasks() ([]entity.Task, error)
+	GetTasks(limit int) ([]entity.Task, error)
 	DeleteTask(taskId int) error
 }
 

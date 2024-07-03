@@ -41,15 +41,27 @@ func (t *TaskToPostgres) GetTask(taskId int) (entity.Task, error) {
 	return task, nil
 }
 
-func (t *TaskToPostgres) GetTasks() ([]entity.Task, error) {
+var offsetTasks int
+
+func (t *TaskToPostgres) GetTasks(limit int) ([]entity.Task, error) {
 
 	var tasks []entity.Task
-
-	query := fmt.Sprintf("SELECT name, importance, status, description FROM %s", taskTable)
-	err := t.db.Select(&tasks, query)
+backward:
+	query := fmt.Sprintf("SELECT name, importance, status, description FROM %s WHERE id > $1 ORDER BY id ASC LIMIT $2", taskTable)
+	err := t.db.Select(&tasks, query, offsetTasks, limit)
 	if err != nil {
 		return tasks, err
 	}
+
+	if tasks == nil {
+		offsetTasks = 0
+		goto backward
+	} else if len(tasks) < limit {
+		offsetTasks = 0
+	} else {
+		offsetTasks += limit
+	}
+
 	return tasks, nil
 }
 
