@@ -22,7 +22,6 @@ type People struct {
 type Task struct {
 	Name        string `db:"name" json:"name"`
 	Importance  string `db:"importance" json:"importance"`
-	Status      string `db:"status" json:"status"`
 	Description string `db:"description" json:"description"`
 }
 

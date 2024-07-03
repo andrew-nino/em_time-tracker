@@ -16,20 +16,21 @@ func NewPeopleToPostgres(db *sqlx.DB) *PeopleToPostgres {
 	return &PeopleToPostgres{db: db}
 }
 
-func (p *PeopleToPostgres) CreatePerson(managerID int, serie, number string) error {
+func (p *PeopleToPostgres) CreatePerson(managerID int, serie, number string) (int, error) {
 
-	query := fmt.Sprintf("INSERT INTO %s (manager_id, passport_serie, passport_number) values ($1, $2, $3)", peopleTable)
-
-	_, err := p.db.Exec(query, managerID, serie, number)
+	var id int
+	query := fmt.Sprintf("INSERT INTO %s (manager_id, passport_serie, passport_number) values ($1, $2, $3) RETURNING id", peopleTable)
+	row := p.db.QueryRow(query, managerID, serie, number)
+	err := row.Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
-
-	return nil
+	return id, nil
 }
 
-func (p *PeopleToPostgres) UpdatePerson(serie, number string, newData entity.People) error {
+func (p *PeopleToPostgres) UpdatePerson(serie, number string, newData entity.People) (int, error) {
 
+	var id int
 	setValues := make([]string, 0)
 
 	if newData.Surname != "" {
@@ -49,11 +50,15 @@ func (p *PeopleToPostgres) UpdatePerson(serie, number string, newData entity.Peo
 	}
 	setQuery := strings.Join(setValues, ", ")
 
-	query := fmt.Sprintf(`UPDATE %s SET %s  WHERE passport_serie = $1 AND passport_number = $2`, peopleTable, setQuery)
+	query := fmt.Sprintf(`UPDATE %s SET %s  WHERE passport_serie = $1 AND passport_number = $2 RETURNING id`, peopleTable, setQuery)
 
-	_, err := p.db.Exec(query, serie, number)
+	row := p.db.QueryRow(query, serie, number)
+	err := row.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
 
-	return err
+	return id, err
 }
 
 func (p *PeopleToPostgres) DeletePerson(managerID int, serie, number string) error {

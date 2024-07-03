@@ -17,20 +17,20 @@ func NewPeopleService(repo postgresdb.PeopleRepository) *PeopleService {
 	return &PeopleService{repo: repo}
 }
 
-func (s *PeopleService) CreatePerson(managerID int, passport string) error {
+func (s *PeopleService) CreatePerson(managerID int, passport string) (int, error) {
 
 	serie, number, err := ProcessingPassportData(passport)
 	if err != nil {
-		return fmt.Errorf("failed to parse passport data: %w", err)
+		return 0, fmt.Errorf("failed to parse passport data: %w", err)
 	}
 	return s.repo.CreatePerson(managerID, serie, number)
 }
 
-func (s *PeopleService) UpdatePerson(passport string, newData entity.People) error {
+func (s *PeopleService) UpdatePerson(passport string, newData entity.People) (int, error) {
 
 	serie, number, err := ProcessingPassportData(passport)
 	if err != nil {
-		return fmt.Errorf("failed to parse passport data: %w", err)
+		return 0, fmt.Errorf("failed to parse passport data: %w", err)
 	}
 	return s.repo.UpdatePerson(serie, number, newData)
 }

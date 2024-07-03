@@ -12,8 +12,8 @@ type Authorization interface {
 }
 
 type PeopleRepository interface {
-	CreatePerson(managerID int, serie, number string) error
-	UpdatePerson(serie, number string, newData entity.People) error
+	CreatePerson(managerID int, serie, number string) (int, error)
+	UpdatePerson(serie, number string, newData entity.People) (int, error)
 	DeletePerson(managerID int, serie, number string) error
 }
 

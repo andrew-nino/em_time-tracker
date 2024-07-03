@@ -18,8 +18,8 @@ func NewTasksToPostgres(db *sqlx.DB) *TaskToPostgres {
 func (t *TaskToPostgres) CreateTask(task entity.Task) (int, error) {
 
 	var taskID int
-	createTaskQuery := fmt.Sprintf("INSERT INTO %s (name, importance, status, description) VALUES ($1, $2, $3, $4) RETURNING id", taskTable)
-	row := t.db.QueryRow(createTaskQuery, task.Name, task.Importance, task.Status, task.Description)
+	createTaskQuery := fmt.Sprintf("INSERT INTO %s (name, importance, description) VALUES ($1, $2, $3) RETURNING id", taskTable)
+	row := t.db.QueryRow(createTaskQuery, task.Name, task.Importance, task.Description)
 
 	err := row.Scan(&taskID)
 	if err != nil {
@@ -33,7 +33,7 @@ func (t *TaskToPostgres) GetTask(taskId int) (entity.Task, error) {
 
 	var task entity.Task
 
-	query := fmt.Sprintf("SELECT name, importance, status, description FROM %s WHERE id = $1", taskTable)
+	query := fmt.Sprintf("SELECT name, importance, description FROM %s WHERE id = $1", taskTable)
 	err := t.db.Get(&task, query, taskId)
 	if err != nil {
 		return task, err
@@ -47,7 +47,7 @@ func (t *TaskToPostgres) GetTasks(limit int) ([]entity.Task, error) {
 
 	var tasks []entity.Task
 backward:
-	query := fmt.Sprintf("SELECT name, importance, status, description FROM %s WHERE id > $1 ORDER BY id ASC LIMIT $2", taskTable)
+	query := fmt.Sprintf("SELECT name, importance, description FROM %s WHERE id > $1 ORDER BY id ASC LIMIT $2", taskTable)
 	err := t.db.Select(&tasks, query, offsetTasks, limit)
 	if err != nil {
 		return tasks, err

@@ -14,7 +14,7 @@ type userInput struct {
 
 type response struct {
 	Message string `json:"message"`
-	ID  int    `json:"id"`
+	ID      int    `json:"id"`
 }
 
 func (h *Handler) createPerson(c *gin.Context) {
@@ -34,7 +34,8 @@ func (h *Handler) createPerson(c *gin.Context) {
 		return
 	}
 
-	if err := h.services.CreatePerson(stub, input.PassportNumber); err != nil {
+	id, err := h.services.CreatePerson(stub, input.PassportNumber)
+	if err != nil {
 		if errors.Is(err, ErrCannotParsePassport) {
 			newErrorResponse(c, http.StatusBadRequest, "Invalid passport number")
 			return
@@ -42,7 +43,7 @@ func (h *Handler) createPerson(c *gin.Context) {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, response{Message: "success"})
+	c.JSON(http.StatusOK, response{Message: "success", ID: id})
 }
 
 func (h *Handler) updatePerson(c *gin.Context) {
@@ -66,11 +67,12 @@ func (h *Handler) updatePerson(c *gin.Context) {
 		Address:    address,
 	}
 
-	if err := h.services.UpdatePerson(input.PassportNumber, newData); err != nil {
+	id, err := h.services.UpdatePerson(input.PassportNumber, newData)
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, response{Message: "success"})
+	c.JSON(http.StatusOK, response{Message: "success", ID: id})
 }
 
 func (h *Handler) deletePerson(c *gin.Context) {

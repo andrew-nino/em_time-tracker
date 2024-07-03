@@ -12,8 +12,8 @@ type Authorization interface {
 }
 
 type People interface {
-	CreatePerson(managerID int, passport string) error
-	UpdatePerson(passport string, newData entity.People) error
+	CreatePerson(managerID int, passport string) (int, error)
+	UpdatePerson(passport string, newData entity.People) (int, error)
 	DeletePerson(managerID int, passport string) error
 }
 
