@@ -22,3 +22,24 @@ func (h *Handler) getUserInfo(c *gin.Context) {
 
 	c.JSON(http.StatusOK, out)
 }
+
+func (h *Handler) getAllUsersInfo(c *gin.Context) {
+
+	filterUsers := c.Query("filter")
+
+	sortProperty := c.Query("sortProperty")
+	sortDirection := c.Query("sortDirection")
+	limit := c.Query("limit")
+
+	responce, err := h.services.GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, responce)
+}
+
+func (h *Handler) getUserEffort(c *gin.Context) {
+
+}

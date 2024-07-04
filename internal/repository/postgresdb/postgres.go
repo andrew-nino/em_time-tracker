@@ -19,6 +19,7 @@ type PeopleRepository interface {
 
 type InfoRepository interface {
 	GetUserInfo(serie, number string) (entity.People, error)
+	GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit string) ([]entity.People, error)
 }
 
 type TasksRepository interface {

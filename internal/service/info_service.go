@@ -23,6 +23,10 @@ func (s *InfoService) GetUserInfo(serie, number string) (p entity.People, err er
 	if err != nil {
 		return p, err
 	}
-	
+
 	return s.repo.GetUserInfo(serie, number)
+}
+
+func (s *InfoService) GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit string) ([]entity.People, error) {
+	return s.repo.GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit)
 }

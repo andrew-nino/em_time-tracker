@@ -39,6 +39,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		info := v1.Group("/info")
 		{
 			info.GET("/", h.getUserInfo)
+			info.GET("/all", h.getAllUsersInfo)
+			// info.GET("/effort", h.getUserEffort)
 		}
 
 		people := v1.Group("/people")
@@ -53,17 +55,12 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			tasks.POST("/create", h.createTask)
 			tasks.GET("/:taskId", h.getTask)
 			tasks.GET("/", h.getTasks)
-
-			// tasks.PATCH("/update", h.updateTask)
 			tasks.DELETE("/delete", h.deleteTask)
 		}
 		tracker := v1.Group("/tracker")
 		{
 			tracker.POST("/start", h.startTask)
-            tracker.POST("/stop", h.stopTask)
-            // tracker.GET("/:taskId", h.getTracker)
-            // tracker.GET("/", h.getTrackers)
-            // tracker.GET("/stats", h.getTrackerStats)
+			tracker.POST("/stop", h.stopTask)
 		}
 	}
 

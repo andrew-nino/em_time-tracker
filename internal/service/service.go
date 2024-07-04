@@ -19,6 +19,7 @@ type People interface {
 
 type Info interface {
 	GetUserInfo(serie, number string) (entity.People, error)
+	GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit string) ([]entity.People, error)
 }
 
 type Tasks interface {
