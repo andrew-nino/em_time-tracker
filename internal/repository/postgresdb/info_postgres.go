@@ -36,8 +36,18 @@ func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirect
 	limit, _ := strconv.Atoi(limitStr)
 	var responce []entity.People
 
+	if filterUsers == "" {
+		filterUsers = "surname, name, patronymic, address"
+	}
+	if sortProperty == "" {
+		sortProperty = filterUsers
+	}
+	if sortDirection == "" {
+		sortDirection = "ASC"
+	}
+
 backward:
-	queryPeopleStr := fmt.Sprintf("SELECT surname, name, patronymic, address FROM %s WHERE id > $1 ORDER BY %s %s LIMIT $2", peopleTable, filterUsers, sortDirection)
+	queryPeopleStr := fmt.Sprintf("SELECT %s FROM %s WHERE id > $1 ORDER BY %s %s LIMIT $2", filterUsers, peopleTable, sortProperty, sortDirection)
 	err := i.db.Select(&responce, queryPeopleStr, offsetAllInfo, limit)
 	if err != nil {
 		return nil, err
