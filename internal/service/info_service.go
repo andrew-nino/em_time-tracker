@@ -30,3 +30,9 @@ func (s *InfoService) GetUserInfo(serie, number string) (p entity.People, err er
 func (s *InfoService) GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit string) ([]entity.People, error) {
 	return s.repo.GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit)
 }
+
+func (s *InfoService) GetUserEffort(user_id, beginningPeriod, endPeriod string) ([]entity.Effort, entity.People, error) {
+
+	// TODO Добавить проверку валидности строк с периодом выборки данных.
+	return s.repo.GetUserEffort(user_id, beginningPeriod, endPeriod)
+}

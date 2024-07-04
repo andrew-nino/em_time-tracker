@@ -20,6 +20,7 @@ type People interface {
 type Info interface {
 	GetUserInfo(serie, number string) (entity.People, error)
 	GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit string) ([]entity.People, error)
+	GetUserEffort(user_id, beginningPeriod, endPeriod string) ([]entity.Effort, entity.People, error)
 }
 
 type Tasks interface {

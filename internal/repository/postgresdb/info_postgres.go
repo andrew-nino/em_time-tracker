@@ -21,9 +21,7 @@ func (i *InfoFromPostgres) GetUserInfo(serie, number string) (entity.People, err
 	var response entity.People
 
 	query := fmt.Sprintf("SELECT surname, name, patronymic, address FROM %s WHERE passport_serie = $1 AND passport_number = $2", peopleTable)
-
 	err := i.db.Get(&response, query, serie, number)
-
 	if err != nil {
 		return response, err
 	}
@@ -63,4 +61,28 @@ backward:
 	}
 
 	return responce, nil
+}
+
+func (i *InfoFromPostgres) GetUserEffort(user_id, beginningPeriod, endPeriod string) ([]entity.Effort, entity.People, error) {
+
+	effor := []entity.Effort{}
+	queryPeopleStr := fmt.Sprintf(`SELECT task_id, to_char( finished_at - created_at, 'HH24:MI') AS total_time 
+								   FROM %s
+								   WHERE created_at >= to_timestamp($1, 'YYYY-MM-DD') AND finished_at <= to_timestamp($2, 'YYYY-MM-DD') + interval '24 hour'
+								   GROUP BY people_id, task_id, total_time
+								   HAVING people_id = $3
+								   ORDER BY people_id, total_time DESC`, trackerTable)
+	err := i.db.Select(&effor, queryPeopleStr, beginningPeriod, endPeriod, user_id)
+	if err != nil {
+		return nil, entity.People{}, err
+	}
+
+	var user entity.People
+	query := fmt.Sprintf("SELECT surname, name FROM %s WHERE id = $1", peopleTable)
+	err = i.db.Get(&user, query, user_id)
+	if err != nil {
+		return nil, entity.People{}, err
+	}
+
+	return effor, user, nil
 }

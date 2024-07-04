@@ -43,7 +43,7 @@ func Run() {
 	m := NewMigration(cfg)
 	err = m.Steps(1)
 	if err != nil {
-		// log.Fatalf("failed to migrate db: %s", err.Error())
+		log.Fatalf("failed to migrate db: %s", err.Error())
 	}
 
 	// Services dependencies

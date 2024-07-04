@@ -40,7 +40,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		{
 			info.GET("/", h.getUserInfo)
 			info.GET("/all", h.getAllUsersInfo)
-			// info.GET("/effort", h.getUserEffort)
+			info.GET("/effort", h.getUserEffort)
 		}
 
 		people := v1.Group("/people")

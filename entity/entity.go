@@ -2,8 +2,6 @@ package entity
 
 import "time"
 
-// import "time"
-
 type Manager struct {
 	Id          int    `db:"id" swagg:"-"`
 	Name        string `db:"name" json:"name" binding:"required"`
@@ -30,4 +28,10 @@ type Tracker struct {
 	PeopleID    int       `db:"people_id" json:"people_id"`
 	Created_at  time.Time `db:"created_at" json:"created_at"`
 	Finished_at time.Time `db:"finished_at" json:"finished_at"`
+}
+
+type Effort struct {
+	TaskID          string `db:"task_id" json:"task_id"`
+	TaskDescription string `db:"description" json:"description"`
+	TotalTime       string    `db:"total_time" json:"total_time"`
 }
