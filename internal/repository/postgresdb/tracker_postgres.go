@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 type TrackerToPostgres struct {
@@ -26,6 +27,7 @@ func (t *TrackerToPostgres) StartTracker(user_id, task_id string) (int, error) {
 	statusRow := tx.QueryRow(checkQuery, task_id)
 	err = statusRow.Scan(&statusTask)
 	if err != nil {
+		log.Debugf("repository.StartTracker - statusRow.Scan : %v", err)
 		tx.Rollback()
 		return 0, err
 	} else if statusTask != "planed" {
@@ -37,6 +39,7 @@ func (t *TrackerToPostgres) StartTracker(user_id, task_id string) (int, error) {
 	row := tx.QueryRow(createItemQuery, task_id, user_id)
 	err = row.Scan(&track_id)
 	if err != nil {
+		log.Debugf("repository.StartTracker - row.Scan : %v", err)
 		tx.Rollback()
 		return 0, fmt.Errorf("failed to start task: %w", err)
 	}
@@ -44,10 +47,10 @@ func (t *TrackerToPostgres) StartTracker(user_id, task_id string) (int, error) {
 	updateQuery := fmt.Sprintf("UPDATE %s SET status = 'accepted' WHERE id = $1", taskTable)
 	_, err = tx.Exec(updateQuery, task_id)
 	if err != nil {
+		log.Debugf("repository.StartTracker - tx.Exec : %v", err)
 		tx.Rollback()
 		return 0, fmt.Errorf("failed to update task status when running task: %w", err)
 	}
-
 	return track_id, tx.Commit()
 }
 
@@ -61,6 +64,7 @@ func (t *TrackerToPostgres) StopTracker(user_id, task_id string) error {
 	createItemQuery := fmt.Sprintf("UPDATE %s SET finished_at = now() WHERE task_id = $1 AND people_id = $2", trackerTable)
 	_, err = tx.Exec(createItemQuery, task_id, user_id)
 	if err != nil {
+		log.Debugf("repository.StopTracker - tx.Exec on trackerTable : %v", err)
 		tx.Rollback()
 		return fmt.Errorf("error updating tracker: %w", err)
 	}
@@ -68,6 +72,7 @@ func (t *TrackerToPostgres) StopTracker(user_id, task_id string) error {
 	updateQuery := fmt.Sprintf("UPDATE %s SET status = 'completed' WHERE id = $1", taskTable)
 	_, err = tx.Exec(updateQuery, task_id)
 	if err != nil {
+		log.Debugf("repository.StopTracker - tx.Exec on taskTable : %v", err)
 		tx.Rollback()
 		return fmt.Errorf("failed to update task status when running task: %w", err)
 	}

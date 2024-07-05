@@ -3,9 +3,10 @@ package postgresdb
 import (
 	"fmt"
 
-	"github.com/jmoiron/sqlx"
-
 	"github.com/andrew-nino/em_time-tracker/entity"
+
+	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 type AuthPostgres struct {
@@ -23,6 +24,7 @@ func (r *AuthPostgres) CreateManager(mng entity.Manager) (int, error) {
 
 	row := r.db.QueryRow(query, mng.Name, mng.Managername, mng.Password)
 	if err := row.Scan(&id); err != nil {
+		log.Debugf("repository.CreateManager - db.QueryRow : %v", err)
 		return 0, err
 	}
 
@@ -34,6 +36,9 @@ func (r *AuthPostgres) GetManager(managerName, password string) (int, error) {
 	var userID int
 	query := fmt.Sprintf("SELECT id FROM %s WHERE managername=$1 AND password_hash=$2", managerTable)
 	err := r.db.Get(&userID, query, managerName, password)
-
+	if err != nil {
+		log.Debugf("repository.CreateManager - db.Get : %v", err)
+		return 0, err
+	}
 	return userID, err
 }

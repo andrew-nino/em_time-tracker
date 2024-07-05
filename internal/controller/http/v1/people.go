@@ -5,7 +5,9 @@ import (
 	"net/http"
 
 	"github.com/andrew-nino/em_time-tracker/entity"
+
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 type userInput struct {
@@ -53,6 +55,7 @@ func (h *Handler) createPerson(c *gin.Context) {
 			newErrorResponse(c, http.StatusBadRequest, "Invalid passport number")
 			return
 		}
+		log.Debugf("error when create person : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -99,6 +102,7 @@ func (h *Handler) updatePerson(c *gin.Context) {
 
 	id, err := h.services.UpdatePerson(input.PassportNumber, newData)
 	if err != nil {
+		log.Debugf("error when update person : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
@@ -136,6 +140,7 @@ func (h *Handler) deletePerson(c *gin.Context) {
 	}
 
 	if err := h.services.DeletePerson(stub, input.PassportNumber); err != nil {
+		log.Debugf("error when delete person : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

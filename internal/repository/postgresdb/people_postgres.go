@@ -5,7 +5,9 @@ import (
 	"strings"
 
 	"github.com/andrew-nino/em_time-tracker/entity"
+
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 type PeopleToPostgres struct {
@@ -23,6 +25,7 @@ func (p *PeopleToPostgres) CreatePerson(managerID int, serie, number string) (in
 	row := p.db.QueryRow(query, managerID, serie, number)
 	err := row.Scan(&id)
 	if err != nil {
+		log.Debugf("repository.CreatePerson - row.Scan : %v", err)
 		return 0, err
 	}
 	return id, nil
@@ -55,6 +58,7 @@ func (p *PeopleToPostgres) UpdatePerson(serie, number string, newData entity.Peo
 	row := p.db.QueryRow(query, serie, number)
 	err := row.Scan(&id)
 	if err != nil {
+		log.Debugf("repository.UpdatePerson - row.Scan : %v", err)
 		return 0, err
 	}
 
@@ -64,8 +68,10 @@ func (p *PeopleToPostgres) UpdatePerson(serie, number string, newData entity.Peo
 func (p *PeopleToPostgres) DeletePerson(managerID int, serie, number string) error {
 
 	query := fmt.Sprintf(`DELETE FROM %s WHERE passport_serie = $1 AND passport_number = $2`, peopleTable)
-
 	_, err := p.db.Exec(query, serie, number)
-
-	return err
+	if err != nil {
+		log.Debugf("repository.DeletePerson - db.Exec : %v", err)
+		return err
+	}
+	return nil
 }

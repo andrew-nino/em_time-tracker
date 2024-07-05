@@ -10,7 +10,7 @@ import (
 	repo "github.com/andrew-nino/em_time-tracker/internal/repository/postgresdb"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // TODO  Перекинуть в config
@@ -41,7 +41,14 @@ func (s *AuthService) CreateManager(mng entity.Manager) (int, error) {
 	if err != nil {
 		return 0, err
 	}
-	return s.repo.CreateManager(mng)
+
+	id, err := s.repo.CreateManager(mng)
+	if err != nil {
+		log.Errorf("AuthService.CreateManager - s.repo.CreateManager: %v", err)
+		return 0, err
+	}
+
+	return id, nil
 }
 
 // Checks that the client is already registered and returns the generated token.
@@ -49,10 +56,12 @@ func (s *AuthService) SignIn(managerName, password string) (string, error) {
 
 	passwordHash, err := generatePasswordHash(password)
 	if err != nil {
+		log.Errorf("AuthService.SignIn - generatePasswordHash: %v", err)
 		return "", err
 	}
 	managerId, err := s.repo.GetManager(managerName, passwordHash)
 	if err != nil {
+		log.Errorf("AuthService.SignIn - s.repo.GetManager: %v", err)
 		return "", err
 	}
 
@@ -72,7 +81,6 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
 		}
-
 		return []byte(signingKey), nil
 	})
 	if err != nil {
@@ -93,7 +101,7 @@ func generatePasswordHash(password string) (string, error) {
 	hash := sha1.New()
 	_, err := hash.Write([]byte(password))
 	if err != nil {
-		logrus.Debugf("failed to generate password hash: %s", err)
+		log.Debugf("failed to generate password hash: %s", err)
 		return "", err
 	}
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt))), nil

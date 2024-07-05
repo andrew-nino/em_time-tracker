@@ -6,6 +6,7 @@ import (
 	"github.com/andrew-nino/em_time-tracker/entity"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 //	@Summary		SignUp
@@ -31,7 +32,8 @@ func (h *Handler) signUp(c *gin.Context) {
 
 	id, err := h.services.Authorization.CreateManager(input)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		log.Debugf("error when registering manager : %s", err.Error())
+		newErrorResponse(c, http.StatusInternalServerError, "internal server error")
 		return
 	}
 
@@ -67,6 +69,7 @@ func (h *Handler) signIn(c *gin.Context) {
 
 	token, err := h.services.Authorization.SignIn(input.ManagerName, input.Password)
 	if err != nil {
+		log.Debugf("error during mamager verification : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}

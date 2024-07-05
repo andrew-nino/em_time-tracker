@@ -2,9 +2,11 @@ package v1
 
 import (
 	"errors"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -15,24 +17,28 @@ const (
 func (h *Handler) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {
-		newErrorResponse(c, http.StatusUnauthorized, "empty auth header")
+		log.Errorf("AuthMiddleware.userIdentity:  %v", ErrEmptyAuthHeader)
+		newErrorResponse(c, http.StatusUnauthorized, ErrEmptyAuthHeader.Error())
 		return
 	}
 
 	headerParts := strings.Split(header, " ")
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
-		newErrorResponse(c, http.StatusUnauthorized, "invalid auth header")
+		log.Errorf("AuthMiddleware.userIdentity: bearerToken: %v", ErrInvalidAuthHeader)
+		newErrorResponse(c, http.StatusUnauthorized, ErrInvalidAuthHeader.Error())
 		return
 	}
 
 	if len(headerParts[1]) == 0 {
-		newErrorResponse(c, http.StatusUnauthorized, "token is empty")
+		log.Errorf("AuthMiddleware.userIdentity: emtyToken: %v", ErrEmptyAythToken)
+		newErrorResponse(c, http.StatusUnauthorized, ErrEmptyAythToken.Error())
 		return
 	}
 
 	managerID, err := h.services.Authorization.ParseToken(headerParts[1])
 	if err != nil {
-		newErrorResponse(c, http.StatusUnauthorized, err.Error())
+		log.Errorf("AuthMiddleware.userIdentity: CannotParseToken: %v", ErrCannotParseToken)
+		newErrorResponse(c, http.StatusUnauthorized, ErrCannotParseToken.Error())
 		return
 	}
 

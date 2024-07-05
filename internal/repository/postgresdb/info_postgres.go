@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	"github.com/andrew-nino/em_time-tracker/entity"
+
 	"github.com/jmoiron/sqlx"
+	log "github.com/sirupsen/logrus"
 )
 
 type InfoFromPostgres struct {
@@ -20,10 +22,10 @@ func NewInfoFromPostgres(db *sqlx.DB) *InfoFromPostgres {
 func (i *InfoFromPostgres) GetUserInfo(serie, number string) (entity.People, error) {
 
 	var response entity.People
-
 	query := fmt.Sprintf("SELECT surname, name, patronymic, address FROM %s WHERE passport_serie = $1 AND passport_number = $2", peopleTable)
 	err := i.db.Get(&response, query, serie, number)
 	if err != nil {
+		log.Debugf("repository.GetUserInfo - db.Get : %v", err)
 		return response, err
 	}
 	return response, nil
@@ -37,7 +39,7 @@ func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirect
 
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil {
-		// TODO: Добавить логер
+		log.Debugf("repository.GetAllUsersInfo - strconv.Atoi : %v", err)
 		return response, err
 	}
 
@@ -59,6 +61,7 @@ backward:
 	queryPeopleStr := fmt.Sprintf("SELECT %s FROM %s WHERE id > $1 ORDER BY %s %s LIMIT $2", filterUsers, peopleTable, sortProperty, sortDirection)
 	err = i.db.Select(&response, queryPeopleStr, offsetAllInfo, limit)
 	if err != nil {
+		log.Debugf("repository.GetAllUsersInfo - db.Select : %v", err)
 		return nil, err
 	}
 
@@ -89,6 +92,7 @@ func (i *InfoFromPostgres) GetUserEffort(user_id, beginningPeriod, endPeriod str
 								   ORDER BY trc.people_id, total_time DESC`, trackerTable, taskTable)
 	err := i.db.Select(&effor, queryPeopleStr, beginningPeriod, endPeriod, user_id)
 	if err != nil {
+		log.Debugf("repository.GetUserEffort - db.Select : %v", err)
 		return nil, entity.People{}, err
 	}
 
@@ -96,6 +100,7 @@ func (i *InfoFromPostgres) GetUserEffort(user_id, beginningPeriod, endPeriod str
 		effor[i].TotalTime, _, _ = strings.Cut(effor[i].TotalTime, ".")
 		h, err := strconv.Atoi(effor[i].TotalTime)
 		if err != nil {
+			log.Debugf("repository.GetUserEffort - strconv.Atoi : %v", err)
 			return nil, entity.People{}, err
 		}
 
@@ -106,6 +111,7 @@ func (i *InfoFromPostgres) GetUserEffort(user_id, beginningPeriod, endPeriod str
 	query := fmt.Sprintf("SELECT surname, name FROM %s WHERE id = $1", peopleTable)
 	err = i.db.Get(&user, query, user_id)
 	if err != nil {
+		log.Debugf("repository.GetUserEffort - db.Get: %v", err)
 		return nil, entity.People{}, err
 	}
 

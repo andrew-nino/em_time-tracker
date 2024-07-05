@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	"github.com/andrew-nino/em_time-tracker/entity"
+
 	"github.com/andrew-nino/em_time-tracker/internal/repository/postgresdb"
+	log "github.com/sirupsen/logrus"
 )
 
 type PeopleService struct {
@@ -23,7 +25,13 @@ func (s *PeopleService) CreatePerson(managerID int, passport string) (int, error
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse passport data: %w", err)
 	}
-	return s.repo.CreatePerson(managerID, serie, number)
+
+	id, err := s.repo.CreatePerson(managerID, serie, number)
+	if err != nil {
+		log.Errorf("PeopleService.CreatePerson - s.repo.CreatePerson: %v", err)
+		return 0, err
+	}
+	return id, nil
 }
 
 func (s *PeopleService) UpdatePerson(passport string, newData entity.People) (int, error) {
@@ -32,7 +40,13 @@ func (s *PeopleService) UpdatePerson(passport string, newData entity.People) (in
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse passport data: %w", err)
 	}
-	return s.repo.UpdatePerson(serie, number, newData)
+
+	id, err := s.repo.UpdatePerson(serie, number, newData)
+	if err != nil {
+		log.Errorf("PeopleService.UpdatePerson - s.repo.UpdatePerson: %v", err)
+		return 0, err
+	}
+	return id, nil
 }
 
 func (s *PeopleService) DeletePerson(managerID int, passport string) error {
@@ -41,8 +55,13 @@ func (s *PeopleService) DeletePerson(managerID int, passport string) error {
 	if err != nil {
 		return fmt.Errorf("failed to parse passport data: %w", err)
 	}
-	return s.repo.DeletePerson(managerID, serie, number)
 
+	err = s.repo.DeletePerson(managerID, serie, number)
+	if err != nil {
+		log.Errorf("PeopleService.DeletePerson - s.repo.DeletePerson: %v", err)
+		return err
+	}
+	return nil
 }
 
 func ProcessingPassportData(passport string) (string, string, error) {

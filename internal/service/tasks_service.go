@@ -18,11 +18,11 @@ func (t *TasksService) CreateTask(task entity.Task) (int, error) {
 }
 
 func (t *TasksService) GetTask(taskID int) (entity.Task, error) {
-    return t.repo.GetTask(taskID)
+	return t.repo.GetTask(taskID)
 }
 
 func (t *TasksService) GetTasks(limit int) ([]entity.Task, error) {
-    return t.repo.GetTasks(limit)
+	return t.repo.GetTasks(limit)
 }
 
 func (t *TasksService) DeleteTask(taskID int) error {

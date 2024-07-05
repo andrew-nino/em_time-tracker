@@ -32,5 +32,5 @@ type Tracker struct {
 type Effort struct {
 	TaskID          string `db:"task_id" json:"task_id"`
 	TaskDescription string `db:"description" json:"description"`
-	TotalTime       string    `db:"total_time" json:"total_time"`
+	TotalTime       string `db:"total_time" json:"total_time"`
 }

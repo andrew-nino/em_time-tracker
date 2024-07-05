@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/andrew-nino/em_time-tracker/entity"
 	"github.com/andrew-nino/em_time-tracker/internal/repository/postgresdb"
 )
@@ -16,26 +18,32 @@ func NewInfoService(repo postgresdb.InfoRepository) *InfoService {
 	return &InfoService{repo: repo}
 }
 
-func (s *InfoService) GetUserInfo(serie, number string) (p entity.People, err error) {
+func (s *InfoService) GetUserInfo(serie, number string) (ppl entity.People, err error) {
 
 	var isDigit = regexp.MustCompile(`^[0-9]*$`).MatchString
 	if !isDigit(serie) {
-		return entity.People{}, fmt.Errorf("invalid serie value")
+		return ppl, fmt.Errorf("invalid serie value")
 	}
 	if !isDigit(number) {
-		return entity.People{}, fmt.Errorf("invalid number value")
+		return ppl, fmt.Errorf("invalid number value")
 	}
 
 	serie, err = generatePasswordHash(serie)
 	if err != nil {
-		return p, err
+		return ppl, err
 	}
 	number, err = generatePasswordHash(number)
 	if err != nil {
-		return p, err
+		return ppl, err
 	}
 
-	return s.repo.GetUserInfo(serie, number)
+	ppl, err = s.repo.GetUserInfo(serie, number)
+	if err != nil {
+		log.Errorf("InfoService.GetUserInfo - s.repo.GetUserInfo: %v", err)
+		return ppl, err
+	}
+
+	return ppl, nil
 }
 
 func (s *InfoService) GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limit string) ([]entity.People, error) {

@@ -5,7 +5,9 @@ import (
 	"strconv"
 
 	"github.com/andrew-nino/em_time-tracker/entity"
+
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 //	@Summary		Create task
@@ -31,6 +33,7 @@ func (h *Handler) createTask(c *gin.Context) {
 
 	taskID, err := h.services.CreateTask(input)
 	if err != nil {
+		log.Debugf("error when creating task  : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, "task creation failed")
 		return
 	}
@@ -63,6 +66,7 @@ func (h *Handler) getTask(c *gin.Context) {
 
 	out, err = h.services.GetTask(id)
 	if err != nil {
+		log.Debugf("error when receiving task  : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, "failed to get task")
 		return
 	}
@@ -96,6 +100,7 @@ func (h *Handler) getTasks(c *gin.Context) {
 
 	out, err = h.services.GetTasks(limit)
 	if err != nil {
+		log.Debugf("error when receiving tasks : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, "failed to get tasks")
 		return
 	}
@@ -131,6 +136,7 @@ func (h *Handler) deleteTask(c *gin.Context) {
 
 	err = h.services.DeleteTask(id)
 	if err != nil {
+		log.Debugf("error when deleting tasks : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, "failed to delete task")
 		return
 	}
