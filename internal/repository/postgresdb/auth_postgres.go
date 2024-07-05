@@ -30,10 +30,10 @@ func (r *AuthPostgres) CreateManager(mng entity.Manager) (int, error) {
 }
 
 // We make a request to the database about the user. An error is returned if the result set is empty.
-func (r *AuthPostgres) GetManager(managerName, password string) (entity.Manager, error) {
-	var user entity.Manager
+func (r *AuthPostgres) GetManager(managerName, password string) (int, error) {
+	var userID int
 	query := fmt.Sprintf("SELECT id FROM %s WHERE managername=$1 AND password_hash=$2", managerTable)
-	err := r.db.Get(&user, query, managerName, password)
+	err := r.db.Get(&userID, query, managerName, password)
 
-	return user, err
+	return userID, err
 }

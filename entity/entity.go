@@ -3,7 +3,6 @@ package entity
 import "time"
 
 type Manager struct {
-	Id          int    `db:"id" swagg:"-"`
 	Name        string `db:"name" json:"name" binding:"required"`
 	Managername string `db:"managername" json:"managername" binding:"required"`
 	Password    string `db:"password_hash" json:"password" binding:"required"`

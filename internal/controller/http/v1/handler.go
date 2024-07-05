@@ -5,9 +5,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/andrew-nino/em_time-tracker/internal/service"
+
+	_ "github.com/andrew-nino/em_time-tracker/docs"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
@@ -25,6 +29,8 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	gin.DefaultWriter = io.MultiWriter(f)
 
 	router := gin.New()
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	auth := router.Group("/auth")
 	{

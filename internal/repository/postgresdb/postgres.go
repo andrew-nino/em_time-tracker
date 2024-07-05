@@ -8,7 +8,7 @@ import (
 
 type Authorization interface {
 	CreateManager(user entity.Manager) (int, error)
-	GetManager(username, password string) (entity.Manager, error)
+	GetManager(username, password string) (int, error)
 }
 
 type PeopleRepository interface {

@@ -51,7 +51,7 @@ func (s *AuthService) SignIn(managerName, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	manager, err := s.repo.GetManager(managerName, passwordHash)
+	managerId, err := s.repo.GetManager(managerName, passwordHash)
 	if err != nil {
 		return "", err
 	}
@@ -61,7 +61,7 @@ func (s *AuthService) SignIn(managerName, password string) (string, error) {
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		manager.Id,
+		managerId,
 	})
 
 	return token.SignedString([]byte(signingKey))
