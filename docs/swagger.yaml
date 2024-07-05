@@ -1,5 +1,14 @@
 basePath: /
 definitions:
+  entity.Effort:
+    properties:
+      description:
+        type: string
+      task_id:
+        type: string
+      total_time:
+        type: string
+    type: object
   entity.Manager:
     properties:
       managername:
@@ -15,8 +24,39 @@ definitions:
     - name
     - password
     type: object
+  entity.People:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      patronymic:
+        type: string
+      surname:
+        type: string
+    type: object
   v1.errorResponse:
     properties:
+      message:
+        type: string
+    type: object
+  v1.getUserEffort.responce:
+    properties:
+      description:
+        type: string
+      effort:
+        items:
+          $ref: '#/definitions/entity.Effort'
+        type: array
+      name:
+        type: string
+      surname:
+        type: string
+    type: object
+  v1.response:
+    properties:
+      id:
+        type: integer
       message:
         type: string
     type: object
@@ -30,6 +70,13 @@ definitions:
     - managername
     - password
     type: object
+  v1.userInput:
+    properties:
+      passportNumber:
+        type: string
+    required:
+    - passportNumber
+    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -37,6 +84,287 @@ info:
   title: Effective Mobile API
   version: 1.0.0
 paths:
+  /api/v1/info:
+    get:
+      consumes:
+      - application/json
+      description: A method for obtaining information about a user using his passport
+        data. Defined in the task conditions.
+      operationId: ger-user-info
+      parameters:
+      - description: passportSerie
+        in: query
+        name: passportSerie
+        required: true
+        type: integer
+      - description: passportNumber
+        in: query
+        name: passportNumber
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/entity.People'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user info
+      tags:
+      - info
+  /api/v1/info/all:
+    get:
+      consumes:
+      - application/json
+      description: Filtering is possible by the fields "surname", "name", "patronymic",
+        "address". The field(s) for sorting and its direction are specified.
+      operationId: get-all-user-info
+      parameters:
+      - description: 'filtering by fields: surname, name, patronymic, address'
+        in: query
+        name: filter
+        type: string
+      - description: 'sorting by fields: surname, name, patronymic, address'
+        in: query
+        name: sortProperty
+        type: string
+      - description: sorting direction DESC and ASC
+        in: query
+        name: sortDirection
+        type: string
+      - description: output limit - maximum value is 10.
+        in: query
+        name: limit
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: Ok
+          schema:
+            items:
+              $ref: '#/definitions/entity.People'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Receiving data about all users with filtering and sorting.
+      tags:
+      - info
+  /api/v1/info/effort:
+    get:
+      consumes:
+      - application/json
+      description: Obtaining labor costs by user for a period/ task is the sum of
+        hours and minutes, sorted from the highest cost to the least
+      operationId: get-user-effort
+      parameters:
+      - description: user id
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: beginning of period in format 2024-07-03
+        in: query
+        name: beginning
+        type: string
+      - description: end of period in format 2024-07-04
+        in: query
+        name: end
+        type: string
+      responses:
+        "200":
+          description: Ok
+          schema:
+            $ref: '#/definitions/v1.getUserEffort.responce'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Obtaining labor costs for a user in a certain period.
+      tags:
+      - info
+  /api/v1/people/create:
+    post:
+      consumes:
+      - application/json
+      description: The format is specified in the task conditions. Creates a new user
+        using passport data. Returns the ID of the created user. To further fill/change
+        data, the Update method works.
+      operationId: create-person
+      parameters:
+      - description: passportNumber
+        in: body
+        name: passportNumber
+        required: true
+        schema:
+          $ref: '#/definitions/v1.userInput'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create person
+      tags:
+      - people
+  /api/v1/people/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Based on accepted passport data, removes the user from the system.
+      operationId: delete-person
+      parameters:
+      - description: passportNumber
+        in: body
+        name: passportNumber
+        required: true
+        schema:
+          $ref: '#/definitions/v1.userInput'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete information about a person
+      tags:
+      - people
+  /api/v1/people/update:
+    patch:
+      consumes:
+      - application/json
+      description: Updates the user data to the specified one. user verification is
+        carried out using the passport data in the body of the request. If successful,
+        returns a message and user ID.
+      operationId: update-person
+      parameters:
+      - description: passportNumber
+        in: body
+        name: passportNumber
+        required: true
+        schema:
+          $ref: '#/definitions/v1.userInput'
+      - description: surname user
+        in: query
+        name: surname
+        type: string
+      - description: name user
+        in: query
+        name: name
+        type: string
+      - description: patronymic user
+        in: query
+        name: patronymic
+        type: string
+      - description: address user
+        in: query
+        name: address
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Updates information about a person
+      tags:
+      - people
   /auth/sign-in:
     post:
       consumes:

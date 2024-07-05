@@ -32,8 +32,18 @@ func (i *InfoFromPostgres) GetUserInfo(serie, number string) (entity.People, err
 var offsetAllInfo int
 
 func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limitStr string) ([]entity.People, error) {
-	limit, _ := strconv.Atoi(limitStr)
-	var responce []entity.People
+
+	var response []entity.People
+
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		// TODO: Добавить логер
+		return response, err
+	}
+
+	if limit > 10 || limit <= 0 {
+		limit = 10
+	}
 
 	if filterUsers == "" {
 		filterUsers = "surname, name, patronymic, address"
@@ -47,24 +57,26 @@ func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirect
 
 backward:
 	queryPeopleStr := fmt.Sprintf("SELECT %s FROM %s WHERE id > $1 ORDER BY %s %s LIMIT $2", filterUsers, peopleTable, sortProperty, sortDirection)
-	err := i.db.Select(&responce, queryPeopleStr, offsetAllInfo, limit)
+	err = i.db.Select(&response, queryPeopleStr, offsetAllInfo, limit)
 	if err != nil {
 		return nil, err
 	}
 
-	if responce == nil {
+	if response == nil {
 		offsetAllInfo = 0
 		goto backward
-	} else if len(responce) < limit {
+	} else if len(response) < limit {
 		offsetAllInfo = 0
 	} else {
 		offsetAllInfo += limit
 	}
 
-	return responce, nil
+	return response, nil
 }
 
 func (i *InfoFromPostgres) GetUserEffort(user_id, beginningPeriod, endPeriod string) ([]entity.Effort, entity.People, error) {
+
+	// TODO Сделать проверку входящих данных
 
 	effor := []entity.Effort{}
 	queryPeopleStr := fmt.Sprintf(`SELECT trc.task_id, tsc.description, 

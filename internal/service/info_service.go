@@ -1,6 +1,9 @@
 package service
 
 import (
+	"fmt"
+	"regexp"
+
 	"github.com/andrew-nino/em_time-tracker/entity"
 	"github.com/andrew-nino/em_time-tracker/internal/repository/postgresdb"
 )
@@ -14,6 +17,14 @@ func NewInfoService(repo postgresdb.InfoRepository) *InfoService {
 }
 
 func (s *InfoService) GetUserInfo(serie, number string) (p entity.People, err error) {
+
+	var isDigit = regexp.MustCompile(`^[0-9]*$`).MatchString
+	if !isDigit(serie) {
+		return entity.People{}, fmt.Errorf("invalid serie value")
+	}
+	if !isDigit(number) {
+		return entity.People{}, fmt.Errorf("invalid number value")
+	}
 
 	serie, err = generatePasswordHash(serie)
 	if err != nil {
