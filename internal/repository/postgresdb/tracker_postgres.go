@@ -14,7 +14,7 @@ func NewTrackerPostgres(db *sqlx.DB) *TrackerToPostgres {
 	return &TrackerToPostgres{db: db}
 }
 
-func (t *TrackerToPostgres) StartTask(user_id, task_id string) (int, error) {
+func (t *TrackerToPostgres) StartTracker(user_id, task_id string) (int, error) {
 	tx, err := t.db.Begin()
 	if err != nil {
 		return 0, err
@@ -51,7 +51,7 @@ func (t *TrackerToPostgres) StartTask(user_id, task_id string) (int, error) {
 	return track_id, tx.Commit()
 }
 
-func (t *TrackerToPostgres) StopTask(user_id, task_id string) error {
+func (t *TrackerToPostgres) StopTracker(user_id, task_id string) error {
 
 	tx, err := t.db.Begin()
 	if err != nil {

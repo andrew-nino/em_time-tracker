@@ -31,8 +31,8 @@ type Tasks interface {
 }
 
 type Tracker interface {
-	StartTask(user_id, task_id string) (int, error)
-	StopTask(user_id, task_id string) error
+	StartTracker(user_id, task_id string) (int, error)
+	StopTracker(user_id, task_id string) error
 }
 type Service struct {
 	Authorization

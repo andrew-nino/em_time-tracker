@@ -8,8 +8,8 @@ import (
 	"github.com/andrew-nino/em_time-tracker/internal/service"
 
 	_ "github.com/andrew-nino/em_time-tracker/docs"
-	"github.com/swaggo/files"
-	"github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,14 +59,14 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		tasks := v1.Group("/tasks")
 		{
 			tasks.POST("/create", h.createTask)
-			tasks.GET("/:taskId", h.getTask)
-			tasks.GET("/", h.getTasks)
+			tasks.GET("/id", h.getTask)
+			tasks.GET("/all", h.getTasks)
 			tasks.DELETE("/delete", h.deleteTask)
 		}
 		tracker := v1.Group("/tracker")
 		{
-			tracker.POST("/start", h.startTask)
-			tracker.POST("/stop", h.stopTask)
+			tracker.POST("/start", h.startTracker)
+			tracker.POST("/stop", h.stopTracker)
 		}
 	}
 
