@@ -14,6 +14,7 @@ const (
 	userCtx             = "managerID"
 )
 
+// User validation to determine access level.
 func (h *Handler) userIdentity(c *gin.Context) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {

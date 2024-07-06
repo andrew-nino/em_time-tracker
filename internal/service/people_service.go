@@ -19,6 +19,7 @@ func NewPeopleService(repo postgresdb.PeopleRepository) *PeopleService {
 	return &PeopleService{repo: repo}
 }
 
+// Checking the validity of the incoming string, processing the data into a hash and transmitting it to the database
 func (s *PeopleService) CreatePerson(managerID int, passport string) (int, error) {
 
 	serie, number, err := ProcessingPassportData(passport)
@@ -33,7 +34,7 @@ func (s *PeopleService) CreatePerson(managerID int, passport string) (int, error
 	}
 	return id, nil
 }
-
+// Checking the validity of the incoming string, processing the data into a hash and transmitting it to the database
 func (s *PeopleService) UpdatePerson(passport string, newData entity.People) (int, error) {
 
 	serie, number, err := ProcessingPassportData(passport)
@@ -48,7 +49,7 @@ func (s *PeopleService) UpdatePerson(passport string, newData entity.People) (in
 	}
 	return id, nil
 }
-
+// Checking the validity of the incoming string, processing the data into a hash and transmitting it to the database
 func (s *PeopleService) DeletePerson(managerID int, passport string) error {
 
 	serie, number, err := ProcessingPassportData(passport)

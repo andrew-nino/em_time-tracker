@@ -4,7 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"os"
 )
-
+// Set the logging level, data format and output stream
 func SetLogrus(level string) {
 
 	logrusLevel, err := logrus.ParseLevel(level)

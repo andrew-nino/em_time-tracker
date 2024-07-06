@@ -15,6 +15,7 @@ func NewTrackerPostgres(db *sqlx.DB) *TrackerToPostgres {
 	return &TrackerToPostgres{db: db}
 }
 
+// Starts the task start countdown and changes its status.
 func (t *TrackerToPostgres) StartTracker(user_id, task_id string) (int, error) {
 	tx, err := t.db.Begin()
 	if err != nil {
@@ -54,8 +55,8 @@ func (t *TrackerToPostgres) StartTracker(user_id, task_id string) (int, error) {
 	return track_id, tx.Commit()
 }
 
+// Stops the execution of a task and changes its status.
 func (t *TrackerToPostgres) StopTracker(user_id, task_id string) error {
-
 	tx, err := t.db.Begin()
 	if err != nil {
 		return err

@@ -35,21 +35,19 @@ type response struct {
 func (h *Handler) createPerson(c *gin.Context) {
 
 	var input userInput
-	// TODO снять коментанрий и отправлять значение из контекста
-	var stub = 1
-
-	// managerId, err := getManagerId(c)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+// managerId is passed to the database. A template for checking the access level by manager role.
+	managerId, err := getManagerId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	id, err := h.services.CreatePerson(stub, input.PassportNumber)
+	id, err := h.services.CreatePerson(managerId, input.PassportNumber)
 	if err != nil {
 		if errors.Is(err, ErrCannotParsePassport) {
 			newErrorResponse(c, http.StatusBadRequest, "Invalid passport number")
@@ -125,21 +123,19 @@ func (h *Handler) updatePerson(c *gin.Context) {
 func (h *Handler) deletePerson(c *gin.Context) {
 
 	var input userInput
-	// TODO снять коментанрий и отправлять значение из контекста
-	var stub = 1
-
-	// managerId, err := getManagerId(c)
-	// if err != nil {
-	// 	newErrorResponse(c, http.StatusInternalServerError, err.Error())
-	// 	return
-	// }
+// managerId is a template for checking the access level by manager role.
+	managerId, err := getManagerId(c)
+	if err != nil {
+		newErrorResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	if err := h.services.DeletePerson(stub, input.PassportNumber); err != nil {
+	if err := h.services.DeletePerson(managerId, input.PassportNumber); err != nil {
 		log.Debugf("error when delete person : %s", err.Error())
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

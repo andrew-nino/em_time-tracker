@@ -42,26 +42,32 @@ func (t *TaskToPostgres) GetTask(taskId int) (entity.Task, error) {
 	return task, nil
 }
 
-var offsetTasks int
+var g_offsetGetTasks int
 
 func (t *TaskToPostgres) GetTasks(limit int) ([]entity.Task, error) {
 
 	var tasks []entity.Task
+
+	// Check and set default limit and reset global variable
+	if limit > 10 || limit <= 0 {
+		g_offsetGetTasks = 0
+		limit = 10
+	}
 backward:
 	query := fmt.Sprintf("SELECT name, importance, description FROM %s WHERE id > $1 ORDER BY id ASC LIMIT $2", taskTable)
-	err := t.db.Select(&tasks, query, offsetTasks, limit)
+	err := t.db.Select(&tasks, query, g_offsetGetTasks, limit)
 	if err != nil {
 		log.Debugf("repository.GetTasks - db.Select : %v", err)
 		return tasks, err
 	}
 
 	if tasks == nil {
-		offsetTasks = 0
+		g_offsetGetTasks = 0
 		goto backward
-	} else if len(tasks) < limit {
-		offsetTasks = 0
+	} else if len(tasks) <= limit {
+		g_offsetGetTasks = 0
 	} else {
-		offsetTasks += limit
+		g_offsetGetTasks += limit
 	}
 	return tasks, nil
 }

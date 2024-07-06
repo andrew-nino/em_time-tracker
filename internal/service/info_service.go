@@ -18,6 +18,7 @@ func NewInfoService(repo postgresdb.InfoRepository) *InfoService {
 	return &InfoService{repo: repo}
 }
 
+// Checking the validity of the incoming string, processing the data into a hash and transmitting it to the database
 func (s *InfoService) GetUserInfo(serie, number string) (ppl entity.People, err error) {
 
 	var isDigit = regexp.MustCompile(`^[0-9]*$`).MatchString

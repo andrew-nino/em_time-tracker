@@ -31,8 +31,8 @@ func (i *InfoFromPostgres) GetUserInfo(serie, number string) (entity.People, err
 	return response, nil
 }
 
-var offsetAllInfo int
-
+var g_offsetAllInfo int
+// Filters by fields and sorting with a given direction are used.
 func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirection, limitStr string) ([]entity.People, error) {
 
 	var response []entity.People
@@ -42,11 +42,12 @@ func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirect
 		log.Debugf("repository.GetAllUsersInfo - strconv.Atoi : %v", err)
 		return response, err
 	}
-
+// Check and set default limit and reset global variable
 	if limit > 10 || limit <= 0 {
+		g_offsetAllInfo = 0
 		limit = 10
 	}
-
+// Set the default limit for filtering and sorting
 	if filterUsers == "" {
 		filterUsers = "surname, name, patronymic, address"
 	}
@@ -59,24 +60,24 @@ func (i *InfoFromPostgres) GetAllUsersInfo(filterUsers, sortProperty, sortDirect
 
 backward:
 	queryPeopleStr := fmt.Sprintf("SELECT %s FROM %s WHERE id > $1 ORDER BY %s %s LIMIT $2", filterUsers, peopleTable, sortProperty, sortDirection)
-	err = i.db.Select(&response, queryPeopleStr, offsetAllInfo, limit)
+	err = i.db.Select(&response, queryPeopleStr, g_offsetAllInfo, limit)
 	if err != nil {
 		log.Debugf("repository.GetAllUsersInfo - db.Select : %v", err)
 		return nil, err
 	}
 
 	if response == nil {
-		offsetAllInfo = 0
+		g_offsetAllInfo = 0
 		goto backward
-	} else if len(response) < limit {
-		offsetAllInfo = 0
+	} else if len(response) <= limit {
+		g_offsetAllInfo = 0
 	} else {
-		offsetAllInfo += limit
+		g_offsetAllInfo += limit
 	}
 
 	return response, nil
 }
-
+// Obtaining data on user labor costs for a specified period, sorted in descending order.
 func (i *InfoFromPostgres) GetUserEffort(user_id, beginningPeriod, endPeriod string) ([]entity.Effort, entity.People, error) {
 
 	// TODO Сделать проверку входящих данных
