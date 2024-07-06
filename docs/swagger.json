@@ -6,7 +6,7 @@
         "contact": {},
         "version": "1.0.0"
     },
-    "host": "localhost:8000",
+    "host": "localhost:8080",
     "basePath": "/",
     "paths": {
         "/api/v1/info": {
@@ -955,9 +955,6 @@
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
-                },
-                "role": {
                     "type": "string"
                 }
             }

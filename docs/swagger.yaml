@@ -17,8 +17,6 @@ definitions:
         type: string
       password:
         type: string
-      role:
-        type: string
     required:
     - managername
     - name
@@ -86,7 +84,7 @@ definitions:
     required:
     - passportNumber
     type: object
-host: localhost:8000
+host: localhost:8080
 info:
   contact: {}
   description: API Server for test work

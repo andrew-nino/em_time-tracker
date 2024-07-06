@@ -6,7 +6,7 @@ type Manager struct {
 	Name        string `db:"name" json:"name" binding:"required"`
 	Managername string `db:"managername" json:"managername" binding:"required"`
 	Password    string `db:"password_hash" json:"password" binding:"required"`
-	Role        string `db:"role" json:"role"`
+	// Role        string `db:"role" json:"role"`
 }
 
 type People struct {

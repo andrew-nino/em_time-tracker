@@ -6,7 +6,7 @@ import "github.com/andrew-nino/em_time-tracker/internal/app"
 //	@version		1.0.0
 //	@description	API Server for test work
 
-//	@host		localhost:8000
+//	@host		localhost:8080
 //	@BasePath	/
 
 //	@securityDefinitions.apikey	ApiKeyAuth
