@@ -69,7 +69,7 @@ backward:
 	if response == nil {
 		g_offsetAllInfo = 0
 		goto backward
-	} else if len(response) <= limit {
+	} else if len(response) < limit {
 		g_offsetAllInfo = 0
 	} else {
 		g_offsetAllInfo += limit

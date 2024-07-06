@@ -64,7 +64,7 @@ backward:
 	if tasks == nil {
 		g_offsetGetTasks = 0
 		goto backward
-	} else if len(tasks) <= limit {
+	} else if len(tasks) < limit {
 		g_offsetGetTasks = 0
 	} else {
 		g_offsetGetTasks += limit
