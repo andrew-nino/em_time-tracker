@@ -41,7 +41,7 @@ type (
 func NewConfig() (*Config, error) {
 	cfg := &Config{}
 
-	err := cleanenv.ReadConfig(".env", cfg)
+	err := cleanenv.ReadEnv(cfg)
 	if err != nil {
 		return nil, fmt.Errorf("error reading config file: %w", err)
 	}

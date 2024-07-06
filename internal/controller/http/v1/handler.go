@@ -1,9 +1,6 @@
 package v1
 
 import (
-	"io"
-	"log"
-	"os"
 
 	"github.com/andrew-nino/em_time-tracker/internal/service"
 
@@ -23,10 +20,6 @@ func NewHandler(services *service.Service) *Handler {
 }
 
 func (h *Handler) InitRoutes() *gin.Engine {
-
-	gin.DisableConsoleColor()
-	f := setLogsFile()
-	gin.DefaultWriter = io.MultiWriter(f)
 
 	router := gin.New()
 
@@ -71,12 +64,4 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 
 	return router
-}
-
-func setLogsFile() *os.File {
-	file, err := os.OpenFile("./logs/requests.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return file
 }
