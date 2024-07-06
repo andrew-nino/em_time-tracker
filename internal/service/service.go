@@ -5,6 +5,8 @@ import (
 	postgres "github.com/andrew-nino/em_time-tracker/internal/repository/postgresdb"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Authorization interface {
 	CreateManager(user entity.Manager) (int, error)
 	SignIn(username, password string) (string, error)
