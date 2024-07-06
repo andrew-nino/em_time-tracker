@@ -32,8 +32,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 
 	v1 := router.Group("/api/v1", h.userIdentity)
-	// v1 := router.Group("/api/v1")
-
 	{
 		info := v1.Group("/info")
 		{
