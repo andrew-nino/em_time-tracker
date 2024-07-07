@@ -43,8 +43,8 @@ func (h *Handler) signUp(c *gin.Context) {
 }
 
 type signInInput struct {
-	ManagerName string `json:"managername" binding:"required"`
-	Password    string `json:"password" binding:"required"`
+	ManagerName string `json:"managername" binding:"required" example:"Manager"`
+	Password    string `json:"password" binding:"required" example:"qwerty"`
 }
 
 //	@Summary		SignIn

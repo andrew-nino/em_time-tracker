@@ -956,13 +956,16 @@ const docTemplate = `{
             ],
             "properties": {
                 "managername": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Manager"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Andrew"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "qwerty"
                 }
             }
         },
@@ -970,16 +973,20 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "address": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "г. Москва, ул. Ленина, д. 5, кв. 1"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Иван"
                 },
                 "patronymic": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Иванович"
                 },
                 "surname": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Иванов"
                 }
             }
         },
@@ -987,13 +994,16 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "A very important task"
                 },
                 "importance": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "low or high"
                 },
                 "name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "T-001"
                 }
             }
         },
@@ -1044,10 +1054,12 @@ const docTemplate = `{
             ],
             "properties": {
                 "managername": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Manager"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "qwerty"
                 }
             }
         },

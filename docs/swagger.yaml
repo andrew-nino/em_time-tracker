@@ -12,10 +12,13 @@ definitions:
   entity.Manager:
     properties:
       managername:
+        example: Manager
         type: string
       name:
+        example: Andrew
         type: string
       password:
+        example: qwerty
         type: string
     required:
     - managername
@@ -25,21 +28,28 @@ definitions:
   entity.People:
     properties:
       address:
+        example: г. Москва, ул. Ленина, д. 5, кв. 1
         type: string
       name:
+        example: Иван
         type: string
       patronymic:
+        example: Иванович
         type: string
       surname:
+        example: Иванов
         type: string
     type: object
   entity.Task:
     properties:
       description:
+        example: A very important task
         type: string
       importance:
+        example: low or high
         type: string
       name:
+        example: T-001
         type: string
     type: object
   v1.errorResponse:
@@ -70,8 +80,10 @@ definitions:
   v1.signInInput:
     properties:
       managername:
+        example: Manager
         type: string
       password:
+        example: qwerty
         type: string
     required:
     - managername

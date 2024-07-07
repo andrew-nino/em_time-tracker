@@ -3,23 +3,23 @@ package entity
 import "time"
 
 type Manager struct {
-	Name        string `db:"name" json:"name" binding:"required"`
-	Managername string `db:"managername" json:"managername" binding:"required"`
-	Password    string `db:"password_hash" json:"password" binding:"required"`
-	// Role        string `db:"role" json:"role"`
+	Name        string `db:"name" json:"name" binding:"required" example:"Andrew"`
+	Managername string `db:"managername" json:"managername" binding:"required" example:"Manager"`
+	Password    string `db:"password_hash" json:"password" binding:"required" example:"qwerty"`
+	Role        string `db:"role" json:"-"`
 }
 
 type People struct {
-	Surname    string `db:"surname" json:"surname"`
-	Name       string `db:"name" json:"name"`
-	Patronymic string `db:"patronymic" json:"patronymic"`
-	Address    string `db:"address" json:"address"`
+	Surname    string `db:"surname" json:"surname" example:"Иванов"`
+	Name       string `db:"name" json:"name" example:"Иван"`
+	Patronymic string `db:"patronymic" json:"patronymic" example:"Иванович"`
+	Address    string `db:"address" json:"address" example:"г. Москва, ул. Ленина, д. 5, кв. 1"`
 }
 
 type Task struct {
-	Name        string `db:"name" json:"name"`
-	Importance  string `db:"importance" json:"importance"`
-	Description string `db:"description" json:"description"`
+	Name        string `db:"name" json:"name" example:"T-001"`
+	Importance  string `db:"importance" json:"importance" example:"low or high"`
+	Description string `db:"description" json:"description" example:"A very important task"`
 }
 
 type Tracker struct {
